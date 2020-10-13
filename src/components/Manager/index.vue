@@ -1,15 +1,14 @@
 <template>
   <div>
-  <div class="input-div">
-    <input
-      @keyup.enter="addItem()"
-      class="inputText"
-      type="text"
-      v-model="todoModel"
-      placeholder="type a dishes..."
-    />
-    <button>Add</button>
-  </div>
+    <div class="input-div">
+      <input
+        ref="inputValue"
+        @keyup.enter="addDish"
+        type="text"
+        placeholder="type a dishes..."
+      />
+      <button @click="addDish">Add</button>
+    </div>
     <div class="dishes">
       <dishes-list
         title="Ordered"
@@ -21,6 +20,7 @@
         title="Cooked"
         :dishes-data="dishesCookedData"
         class="dishes-list"
+        @dish-done="onCooked"
       />
       <dishes-list
         title="History"
@@ -33,9 +33,9 @@
 </template>
 
 <script>
-import DishesList from './DishesList'
+import DishesList from "./DishesList";
 export default {
-  name: 'Manager',
+  name: "Manager",
 
   components: {
     DishesList,
@@ -43,49 +43,44 @@ export default {
 
   data() {
     return {
-      dishesOrderData: [
-        {
-          id: 1,
-          title: 'd11',
-        },
-        {
-          id: 2,
-          title: 'd22',
-        },
-        {
-          id: 3,
-          title: 'd33',
-        },
-        {
-          id: 4,
-          title: 'd44',
-        },
-        {
-          id: 5,
-          title: 'd5',
-        },
-      ],
+      dishesOrderData: [],
       dishesCookedData: [],
       dishesHistoryData: [],
-    }
+      counter: 0,
+    };
   },
 
   methods: {
     onOrdered(id) {
-      const index = this.dishesOrderData.findIndex((item) => item.id === id)
+      const index = this.dishesOrderData.findIndex((item) => item.id === id);
       if (index !== -1) {
-        this.dishesCookedData.push(this.dishesOrderData[index])
-        this.dishesOrderData.splice(index, 1)
+        this.dishesCookedData.push(this.dishesOrderData[index]);
+        this.dishesOrderData.splice(index, 1);
+      }
+    },
+    onCooked(id) {
+      const index = this.dishesCookedData.findIndex((item) => item.id === id);
+      if (index !== -1) {
+        this.dishesHistoryData.push(this.dishesCookedData[index]);
+        this.dishesCookedData.splice(index, 1);
+      }
+    },
+    addDish() {
+      let value = this.$refs.inputValue.value;
+      if (value) {
+        this.counter += 1;
+        this.dishesOrderData.push({ id: this.counter, title: value });
+        this.$refs.inputValue.value = "";
       }
     },
   },
-}
+};
 </script>
 
 <style lang="css" scoped>
 .dishes-list {
-flex-grow: 1;
-margin-right: 0.3em;
+  flex-grow: 1;
+  margin-right: 0.3em;
 }
 .dishes {
   display: flex;
@@ -94,10 +89,10 @@ margin-right: 0.3em;
   margin: 10px;
 }
 .input-div input {
-width: 22em;
-height: 1.5em;
+  width: 22em;
+  height: 1.5em;
 }
 .input-div button {
-height: 1.9em;
+  height: 1.9em;
 }
 </style>

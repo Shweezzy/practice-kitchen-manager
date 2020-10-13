@@ -5,17 +5,13 @@
 </template>
 
 <script>
-import Manager from './components/Manager'
+import Manager from './components/Manager/index'
 
 export default {
   name: 'App',
   components: {
     Manager,
-  },
-
-  data() {
-    return {}
-  },
+  }
 }
 </script>
 
